@@ -1,151 +1,159 @@
-"use client"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Search, BookOpen, Home, User, Tag } from "lucide-react"
+'use client'
+import React, { useState, useEffect } from 'react';
 import Link from "next/link"
+import { Menu, X, User, CircleUserRound,Home } from "lucide-react"
+import { useSession,  signOut } from "next-auth/react"
+
 
 export function Header() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { data: session } = useSession()
+
+  const onLogout = () => {
+
+  }
+
+  const navigation = [
+    // { name: "首页", href: "/", icon: Home },
+    // { name: "文章", href: "/posts", icon: BookOpen },
+    {name: "首页", href: "/"},
+    // { name: "关于我", href: "#aboutMe", icon: IconUserCircle },
+    { name: "发表文章", href: "/publish"},
+  ]
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <BookOpen className="h-6 w-6" />
-          <span className="text-xl font-bold">我的博客</span>
-        </Link>
+    <header className={`  z-50 w-full  bg-background/95  backdrop-blur border-b supports-[backdrop-filter]:bg-background/60`}>
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">JD</span>
+            </div>
+            <span className="text-xl font-bold text-gray-900">李世海</span>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <NavigationMenu className="hidden md:flex">
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <Link href="/" legacyBehavior passHref>
-                <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
-                  <Home className="mr-2 h-4 w-4" />
-                  首页
-                </NavigationMenuLink>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors duration-200"
+              >
+                <span>{item.name}</span>
               </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>
-                <Tag className="mr-2 h-4 w-4" />
-                分类
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[200px] gap-3 p-4">
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        href="/category/tech"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                      >
-                        <div className="text-sm font-medium leading-none">技术</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">编程、开发相关文章</p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        href="/category/life"
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                      >
-                        <div className="text-sm font-medium leading-none">生活</div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">日常生活感悟</p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/about" legacyBehavior passHref>
-                <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
-                  <User className="mr-2 h-4 w-4" />
-                  关于
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
+            ))}
 
-        {/* Search and Mobile Menu */}
-        <div className="flex items-center space-x-2">
-          {/* Search */}
-          <div className="hidden sm:flex">
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="搜索文章..." className="pl-8 w-[200px] lg:w-[300px]" />
+            {/* Social Links */}
+            <div className="flex items-center space-x-4 ml-6 pl-6 border-l border-gray-200">
+              <Link
+                href="https://github.com"
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {/* <Github className="w-5 h-5" /> */}
+              </Link>
+              <Link
+                href="https://twitter.com"
+                className="text-gray-600 hover:text-blue-500 transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {/* <Twitter className="w-5 h-5" /> */}
+              </Link>
             </div>
           </div>
-
-          {/* Mobile Search Button */}
-          <Button variant="ghost" size="icon" className="sm:hidden" onClick={() => setIsSearchOpen(!isSearchOpen)}>
-            <Search className="h-4 w-4" />
-          </Button>
-
-          {/* Mobile Menu */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-4 w-4" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <SheetHeader>
-                <SheetTitle>导航菜单</SheetTitle>
-                <SheetDescription>浏览博客的各个分类和页面</SheetDescription>
-              </SheetHeader>
-              <nav className="flex flex-col space-y-4 mt-6">
-                <Link href="/" className="flex items-center space-x-2 text-lg font-medium hover:text-primary">
-                  <Home className="h-5 w-5" />
-                  <span>首页</span>
-                </Link>
-                <Link
-                  href="/category/tech"
-                  className="flex items-center space-x-2 text-lg font-medium hover:text-primary"
-                >
-                  <Tag className="h-5 w-5" />
-                  <span>技术</span>
-                </Link>
-                <Link
-                  href="/category/life"
-                  className="flex items-center space-x-2 text-lg font-medium hover:text-primary"
-                >
-                  <Tag className="h-5 w-5" />
-                  <span>生活</span>
-                </Link>
-                <Link href="/about" className="flex items-center space-x-2 text-lg font-medium hover:text-primary">
-                  <User className="h-5 w-5" />
-                  <span>关于</span>
-                </Link>
-              </nav>
-            </SheetContent>
-          </Sheet>
+          {/* Login button */}
+          {session ? (
+          //   <AlertDialog>
+          //   <AlertDialogTrigger>
+          //   <button 
+          //     onClick={onLogout}
+          //     className="text-gray-700 gap-2 h-8 px-2 flex space-x-1 items-center  transition-colors"
+          //   >
+          //     <CircleUserRound   className="w-5 h-8"/>
+          //     <span className=" leading-5">登出</span>
+          //   </button>
+          //   </AlertDialogTrigger>
+          //   <AlertDialogContent>
+          //     <AlertDialogHeader>
+          //       <AlertDialogTitle>确认退出登录？</AlertDialogTitle>
+          //       <AlertDialogDescription>
+          //         点击确认后将退出当前账号。
+          //       </AlertDialogDescription>
+          //     </AlertDialogHeader>
+          //     <AlertDialogFooter>
+          //       <AlertDialogCancel>取消</AlertDialogCancel>
+          //       <AlertDialogAction onClick={() => signOut()}>
+          //         确认退出
+          //       </AlertDialogAction>
+          //     </AlertDialogFooter>
+          //   </AlertDialogContent>
+          // </AlertDialog>
+            <button 
+              onClick={onLogout}
+              className="text-gray-700 gap-2 h-8 px-2 flex space-x-1 items-center  transition-colors"
+            >
+              <CircleUserRound   className="w-5 h-8"/>
+              <span className=" leading-5">登出</span>
+            </button>
+          ) : (
+            <Link href="/login" 
+              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors"
+            >
+              <CircleUserRound   className="w-5 h-5"/>
+              <span className=" leading-5">登录</span>
+            </Link>
+          )}
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+          >
+            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
-      </div>
 
-      {/* Mobile Search Bar */}
-      {isSearchOpen && (
-        <div className="border-t px-4 py-3 sm:hidden">
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="搜索文章..." className="pl-8" />
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span>{item.name}</span>
+                </Link>
+              ))}
+
+              {/* Mobile Social Links */}
+              <div className="flex items-center space-x-4 px-3 py-2">
+                <Link
+                  href="https://github.com"
+                  className="text-gray-600 hover:text-gray-900 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {/* <Github className="w-5 h-5" /> */}
+                </Link>
+                <Link
+                  href="https://twitter.com"
+                  className="text-gray-600 hover:text-blue-500 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {/* <Twitter className="w-5 h-5" /> */}
+                </Link>
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </nav>
     </header>
   )
 }
